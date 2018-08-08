@@ -1,0 +1,11 @@
+{
+    "hydra": {
+      "serviceName": "listener",
+      "serviceIP": "",
+      "servicePort": 3000,
+      "serviceType": "",
+      "serviceDescription": "",
+      "redis": {
+      }
+    }
+  }

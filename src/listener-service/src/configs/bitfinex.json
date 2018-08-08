@@ -1,0 +1,6 @@
+{
+    "baseWssUrl": "wss://api.bitfinex.com/ws/2",
+    "basePublicRestUrl": "https://api.bitfinex.com",
+    "timeFrame": "1h",
+    "symbol": "tBTCUSD"
+}

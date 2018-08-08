@@ -1,4 +1,8 @@
+/* eslint-disable no-underscore-dangle */
+import EventEmitter from 'events';
 import WebSocket from 'ws';
+import request from 'request';
+import bitfinexConf from '../configs/bitfinex.json';
 import Candle from '../models/candle';
 
 /**
@@ -24,10 +28,12 @@ class BitfinexWsService {
      * Start listen the bitfinex candle websocket.
      *
      * @memberof BitfinexWsService
+     * @event Candle#change
      * @since 1.0.0
      */
     start() {
-        const ws = new WebSocket('wss://api.bitfinex.com/ws/2');
+        const emitter = new EventEmitter();
+        const ws = new WebSocket(bitfinexConf.baseWssUrl);
 
         ws.on('message', (msg) => {
             const json = JSON.parse(msg);
@@ -39,19 +45,53 @@ class BitfinexWsService {
             if (!this._isHeartBeat(json)) {
                 const candle = this._createCandle(json);
 
-                if (candle === null) { return; }
+                if (candle === null) {
+                    return;
+                }
 
-                this._hasChanges(candle);
+                if (this._hasChanges(candle)) {
+                    emitter.emit('change', candle);
+                }
             }
         });
 
         const msgC = JSON.stringify({
             event: 'subscribe',
             channel: 'candles',
-            key: 'trade:1h:tBTCUSD',
+            key: `trade:${bitfinexConf.timeFrame}:${bitfinexConf.symbol}`,
         });
 
         ws.on('open', () => ws.send(msgC));
+        return emitter;
+    }
+
+    /**
+     * Get last candle of bitfinex historical data
+     *
+     * @returns {Candle}
+     * @memberof BitfinexWsService
+     * @since 1.0.0
+     */
+    getLastCandle() {
+        const self = this;
+        return new Promise((resolve) => {
+            let body = '';
+            request.get(`${bitfinexConf.basePublicRestUrl}/v2/candles/trade:${bitfinexConf.timeFrame}:${bitfinexConf.symbol}/last`)
+                .on('response', (response) => {
+                    response.on('data', chunk => {
+                        if (Buffer.isBuffer(chunk)) {
+                            body += chunk.toString();
+                        } else {
+                            body += chunk;
+                        }
+                    });
+                    response.on('end', () => {
+                        const arr = JSON.parse(body);
+                        const candle = self._createCandle([self.candlesChannelId, arr]);
+                        resolve(candle);
+                    });
+                });
+        });
     }
 
     /**
@@ -63,11 +103,15 @@ class BitfinexWsService {
      * @since 1.0.0
      */
     _createCandle(arr) {
-        if (!Array.isArray(arr)) { return null; }
+        if (!Array.isArray(arr)) {
+            return null;
+        }
 
         const data = arr[1];
 
-        if (data.length !== 6) { return null; }
+        if (data.length !== 6) {
+            return null;
+        }
 
         return new Candle(data[0], data[1], data[2], data[3], data[4], data[5]);
     }
@@ -111,8 +155,17 @@ class BitfinexWsService {
 
         if (i === -1) {
             this.tempCandles.push(candle);
+
+            if (this.tempCandles.length > 1) {
+                this.getLastCandle().then(x => {
+                    console.log(x);
+                });
+            }
+
         } else {
-            if (this.tempCandles[i] === undefined) { this.tempCandles.push(candle); }
+            if (this.tempCandles[i] === undefined) {
+                this.tempCandles.push(candle);
+            }
 
             if (!candle.equals(this.tempCandles[i])) {
                 this.tempCandles[i] = candle;

@@ -8,8 +8,8 @@
     "lintfix": "eslint . --fix",
     "test": "npm run build && mocha build/test/**/**.spec.js",
     "check": "npm run lint && npm run test",
-    "build": "babel . --ignore node_modules,dist,build -d ./build",
-    "build:prod": "babel . --ignore node_modules,dist,build -d ./dist --presets minify",
+    "build": "babel . --ignore node_modules,dist,build -d ./build --copy-files",
+    "build:prod": "babel . --ignore node_modules,dist,build -d ./dist --presets minify --copy-files",
     "start": "npm run build && node build/index.js",
     "start:prod": "node dist/index.js"
   },
@@ -21,8 +21,11 @@
     "babel-preset-stage-0": "^6.24.1",
     "blinktrade": "0.0.19",
     "body-parser": "^1.18.2",
+    "dotenv": "^6.0.0",
     "express": "^4.16.2",
+    "hydra-express": "^1.7.0",
     "lodash": "^4.17.5",
+    "request": "^2.87.0",
     "socket.io": "^2.0.4",
     "ws": "^6.0.0"
   },

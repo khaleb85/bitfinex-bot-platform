@@ -1,6 +1,7 @@
-import express from 'express';
+import hydra from 'hydra-express';
 import cluster from 'cluster';
 import BodyParser from 'body-parser';
+import packageJson from '../../package.json';
 import Debug from '../tools/debug';
 import Controllers from './controllers';
 
@@ -12,28 +13,25 @@ import Controllers from './controllers';
  */
 class Api {
     /**
-   * @constructor
-   */
-    constructor() {
-        this.port = process.env.port || 3000;
+     * Start the express server with all middlewares.
+     * @param {object} config
+     * @since 1.0.0
+     */
+    start(config) {
+        const controllers = new Controllers();
+        hydra.init(config, packageJson.version, controllers.start, this.registerMiddlewareCallback)
+            .then((serviceinfo) => {
+                Debug.success(`${serviceinfo.serviceName} service is living on ${serviceinfo.serviceIP}:${serviceinfo.servicePort} with worker id: ${cluster.worker.id}`);
+            });
     }
 
     /**
-   * Start the express server with all middlewares.
-   *
-   * @since 1.0.0
-   */
-    start() {
-        const app = express();
+     * Register all middlewares
+     */
+    registerMiddlewareCallback() {
+        const app = hydra.getExpressApp();
 
         app.use(BodyParser.json());
-
-        const controllers = new Controllers(app);
-        controllers.start();
-
-        app.listen(this.port, () => {
-            Debug.success(`Listener service is living on the port: ${this.port} with worker id: ${cluster.worker.id}`);
-        });
     }
 }
 
