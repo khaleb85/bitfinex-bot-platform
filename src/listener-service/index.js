@@ -3,6 +3,7 @@ import hydraConfig from './hydra.json';
 import MultiProcess from './src/tools/multi-process';
 import Api from './src/api';
 import BitfinexWsService from './src/services/bitfinex-ws.service';
+import Debug from './src/tools/debug';
 
 dotenv.config();
 const mProcess = new MultiProcess();
@@ -16,7 +17,6 @@ mProcess.start(() => {
     api.start(hydraConfig);
 }, () => {
     new BitfinexWsService().start()
-        .on('change', candle => {
-            console.log('change: ' + JSON.stringify(candle));
-        });
+        .on('change', candle => Debug.log(`change: ${JSON.stringify(candle)}`))
+        .on('complete', x => Debug.highlight(`complete: ${JSON.stringify(x)}`));
 });

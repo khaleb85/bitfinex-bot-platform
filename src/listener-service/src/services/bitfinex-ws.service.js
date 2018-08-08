@@ -1,8 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 import EventEmitter from 'events';
 import WebSocket from 'ws';
-import request from 'request';
 import bitfinexConf from '../configs/bitfinex.json';
+import BitfinexService from '../services/bitfinex.service';
 import Candle from '../models/candle';
 
 /**
@@ -21,7 +21,9 @@ class BitfinexWsService {
      */
     constructor() {
         this.tempCandles = [];
+        this.completedCandles = [];
         this.candlesChannelId = 0;
+        this.restApi = new BitfinexService();
     }
 
     /**
@@ -29,6 +31,7 @@ class BitfinexWsService {
      *
      * @memberof BitfinexWsService
      * @event Candle#change
+     * @event Candle#complete
      * @since 1.0.0
      */
     start() {
@@ -43,7 +46,10 @@ class BitfinexWsService {
             }
 
             if (!this._isHeartBeat(json)) {
-                const candle = this._createCandle(json);
+                const candle = Candle.create(json);
+                if (this.isCandleOutdated(candle)) {
+                    emitter.emit('complete', candle);
+                }
 
                 if (candle === null) {
                     return;
@@ -63,57 +69,6 @@ class BitfinexWsService {
 
         ws.on('open', () => ws.send(msgC));
         return emitter;
-    }
-
-    /**
-     * Get last candle of bitfinex historical data
-     *
-     * @returns {Candle}
-     * @memberof BitfinexWsService
-     * @since 1.0.0
-     */
-    getLastCandle() {
-        const self = this;
-        return new Promise((resolve) => {
-            let body = '';
-            request.get(`${bitfinexConf.basePublicRestUrl}/v2/candles/trade:${bitfinexConf.timeFrame}:${bitfinexConf.symbol}/last`)
-                .on('response', (response) => {
-                    response.on('data', chunk => {
-                        if (Buffer.isBuffer(chunk)) {
-                            body += chunk.toString();
-                        } else {
-                            body += chunk;
-                        }
-                    });
-                    response.on('end', () => {
-                        const arr = JSON.parse(body);
-                        const candle = self._createCandle([self.candlesChannelId, arr]);
-                        resolve(candle);
-                    });
-                });
-        });
-    }
-
-    /**
-     * Make a Candle object with a api response.
-     *
-     * @param {Array} arr - Array de update, bitfinex
-     * @memberof BitfinexWsService
-     * @returns {Candle}
-     * @since 1.0.0
-     */
-    _createCandle(arr) {
-        if (!Array.isArray(arr)) {
-            return null;
-        }
-
-        const data = arr[1];
-
-        if (data.length !== 6) {
-            return null;
-        }
-
-        return new Candle(data[0], data[1], data[2], data[3], data[4], data[5]);
     }
 
     /**
@@ -147,6 +102,7 @@ class BitfinexWsService {
      *
      * @param {Candle} candle
      * @memberof BitfinexWsService
+     *
      * @returns {boolean}
      * @since 1.0.0
      */
@@ -155,13 +111,6 @@ class BitfinexWsService {
 
         if (i === -1) {
             this.tempCandles.push(candle);
-
-            if (this.tempCandles.length > 1) {
-                this.getLastCandle().then(x => {
-                    console.log(x);
-                });
-            }
-
         } else {
             if (this.tempCandles[i] === undefined) {
                 this.tempCandles.push(candle);
@@ -175,6 +124,31 @@ class BitfinexWsService {
         }
 
         return true;
+    }
+
+    /**
+     * Verify if the candle is outdated based in the api last candle
+     *
+     * @memberof BitfinexWsService
+     * @param {Candle} candle
+     * @returns {boolean}
+     * @since 1.0.0
+     */
+    isCandleOutdated(candle) {
+        if (this.tempCandles.length > 1) {
+            const i = this.completedCandles.findIndex(x => x.msTimeStamp === candle.msTimeStamp);
+
+            if (i !== -1) { return; }
+
+            this.restApi.getLastCandle().then(lastCandle => {
+                if (candle.msTimeStamp < lastCandle.msTimeStamp) {
+                    this.completedCandles.push(candle);
+                    return true;
+                }
+            });
+        }
+
+        return false;
     }
 }
 

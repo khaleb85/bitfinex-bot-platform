@@ -27,6 +27,32 @@ class Candle {
     }
 
     /**
+     * Make a Candle object with a api Array response.
+     *
+     * @param {Array} arr - Array de update, bitfinex
+     * @memberof BitfinexWsService
+     * @returns {Candle}
+     * @since 1.0.0
+     */
+    static create(arr) {
+        if (!Array.isArray(arr)) {
+            return null;
+        }
+
+        const data = arr[1];
+
+        if (!Array.isArray(data)) {
+            return new Candle(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5]);
+        }
+
+        if (data.length !== 6) {
+            return null;
+        }
+
+        return new Candle(data[0], data[1], data[2], data[3], data[4], data[5]);
+    }
+
+    /**
      * Verify if a candle is equals this.
      *
      * @param {Candle} candle
