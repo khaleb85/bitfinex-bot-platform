@@ -4,10 +4,11 @@ import CandlesController from './candles.controller';
 class Controllers {
     /**
      * Add all controllers in the Express app
+     *
+     * @memberof Controllers
      * @since 1.0.0
      */
     start() {
-        // this.app.use('/', ListenController);
         hydra.registerRoutes({
             '/candles': CandlesController,
         });

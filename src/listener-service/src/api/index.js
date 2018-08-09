@@ -14,6 +14,8 @@ import Controllers from './controllers';
 class Api {
     /**
      * Start the express server with all middlewares.
+     *
+     * @memberof Api
      * @param {object} config
      * @since 1.0.0
      */
@@ -27,6 +29,9 @@ class Api {
 
     /**
      * Register all middlewares
+     *
+     * @memberof Api
+     * @since 1.0.0
      */
     registerMiddlewareCallback() {
         const app = hydra.getExpressApp();
