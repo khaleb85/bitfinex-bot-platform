@@ -1,5 +1,5 @@
 import hydra from 'hydra-express';
-import ListenController from './home.controller';
+import CandlesController from './candles.controller';
 
 class Controllers {
     /**
@@ -9,7 +9,7 @@ class Controllers {
     start() {
         // this.app.use('/', ListenController);
         hydra.registerRoutes({
-            '': ListenController,
+            '/candles': CandlesController,
         });
     }
 }

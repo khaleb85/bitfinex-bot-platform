@@ -47,9 +47,14 @@ class BitfinexWsService {
 
             if (!this._isHeartBeat(json)) {
                 const candle = Candle.create(json);
-                if (this.isCandleOutdated(candle)) {
-                    emitter.emit('complete', candle);
-                }
+
+                if (!candle) { return; }
+
+                this.isCandleOutdated(candle).then(isOutdated => {
+                    if (isOutdated) {
+                        emitter.emit('complete', candle);
+                    }
+                });
 
                 if (candle === null) {
                     return;
@@ -131,24 +136,29 @@ class BitfinexWsService {
      *
      * @memberof BitfinexWsService
      * @param {Candle} candle
-     * @returns {boolean}
+     * @returns {Promise<boolean>}
      * @since 1.0.0
      */
     isCandleOutdated(candle) {
-        if (this.tempCandles.length > 1) {
+        return new Promise((resolve) => {
+            if (this.tempCandles.length <= 1) {
+                return resolve(false);
+            }
             const i = this.completedCandles.findIndex(x => x.msTimeStamp === candle.msTimeStamp);
 
-            if (i !== -1) { return; }
+            if (i !== -1) {
+                return resolve(false);
+            }
 
             this.restApi.getLastCandle().then(lastCandle => {
                 if (candle.msTimeStamp < lastCandle.msTimeStamp) {
                     this.completedCandles.push(candle);
-                    return true;
+                    return resolve(true);
                 }
-            });
-        }
 
-        return false;
+                return resolve(false);
+            });
+        });
     }
 }
 

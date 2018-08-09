@@ -19,6 +19,7 @@
     "body-parser": "^1.18.2",
     "dotenv": "^6.0.0",
     "express": "^4.16.2",
+    "hydra": "^1.7.0",
     "hydra-express": "^1.7.0",
     "lodash": "^4.17.5",
     "request": "^2.87.0",
