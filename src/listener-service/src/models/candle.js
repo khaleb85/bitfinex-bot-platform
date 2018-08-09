@@ -42,14 +42,14 @@ class Candle {
         const data = arr[1];
 
         if (!Array.isArray(data)) {
-            return new Candle(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5]);
+            return new Candle(...arr);
         }
 
         if (data.length !== 6) {
             return null;
         }
 
-        return new Candle(data[0], data[1], data[2], data[3], data[4], data[5]);
+        return new Candle(...data);
     }
 
     /**
