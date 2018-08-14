@@ -3,7 +3,7 @@ import cluster from 'cluster';
 import BodyParser from 'body-parser';
 import packageJson from '../../package.json';
 import Debug from '../tools/debug';
-import CandlesController from './controllers/candles.controller';
+import UpdatesController from './controllers/updates.controller';
 
 /**
  * Class that represents the whole application API setup
@@ -34,7 +34,7 @@ class Api {
      */
     registerRoutesCallback() {
         hydraExpress.registerRoutes({
-            '/candles': CandlesController,
+            '/updates': UpdatesController,
         });
     }
 

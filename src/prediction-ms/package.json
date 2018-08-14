@@ -23,7 +23,6 @@
     "hydra-express": "^1.7.0",
     "lodash": "^4.17.5",
     "request": "^2.87.0",
-    "request-promise": "^4.2.2",
     "socket.io": "^2.0.4",
     "ws": "^6.0.0"
   },

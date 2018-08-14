@@ -1,8 +1,8 @@
 {
     "hydra": {
-      "serviceName": "listener",
+      "serviceName": "prediction",
       "serviceIP": "",
-      "servicePort": 3010,
+      "servicePort": 3020,
       "serviceType": "",
       "serviceDescription": "",
       "type": "express",
