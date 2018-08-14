@@ -1,0 +1,13 @@
+{
+    "hydra": {
+      "serviceName": "prediction",
+      "serviceIP": "",
+      "servicePort": 3020,
+      "serviceType": "",
+      "serviceDescription": "",
+      "type": "express",
+      "redis": {
+        "db": 15
+      }
+    }
+  }
