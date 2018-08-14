@@ -3,6 +3,7 @@ import hydra from 'hydra';
 import hydraConfig from './hydra.json';
 import MultiProcess from './src/tools/multi-process';
 import Api from './src/api';
+import FoxbitMigration from './src/repositories/migrations/foxbit-migration';
 
 dotenv.config();
 
@@ -15,6 +16,9 @@ mProcess.start(() => {
     const api = new Api();
     api.start(hydraConfig);
 }, () => {
-    hydra.init(hydraConfig);
+    const migration = new FoxbitMigration();
+    migration.createDatabase('foxbit').then(() => {
+        migration.createTable('foxbit', 'Candles');
+        hydra.init(hydraConfig);
+    });
 });
-
