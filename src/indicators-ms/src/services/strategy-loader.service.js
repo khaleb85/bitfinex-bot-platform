@@ -11,6 +11,7 @@ class StrategyLoaderService {
     constructor() {
         this.strategiesBasePath = './build/src/strategies';
         this.strategiesDynamicPath = '../strategies';
+        this.cache = [];
     }
 
     /**
@@ -22,11 +23,28 @@ class StrategyLoaderService {
      * @since 1.0.0
      */
     runStrategiesMethod(method, data) {
-        this._getStrategiesFilesPath().then(files => {
-            files.forEach(x => {
-                const temp = require(`${this.strategiesDynamicPath}/${x}`);
-                const instance = new temp.default();
-                instance[method](data);
+        return new Promise(resolve => {
+            if (this.cache.length > 0) {
+                this.cache.forEach(instance => {
+                    instance[method](data);
+                });
+                return resolve();
+            }
+
+            throw new Error('You should call the init method before run a strategy function');
+        });
+    }
+
+    init() {
+        return new Promise(resolve => {
+            this._getStrategiesFilesPath().then(files => {
+                files.forEach(x => {
+                    const temp = require(`${this.strategiesDynamicPath}/${x}`);
+                    const instance = new temp.default();
+                    this.cache.push(instance);
+                    instance.init();
+                });
+                return resolve();
             });
         });
     }

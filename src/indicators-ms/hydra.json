@@ -1,8 +1,8 @@
 {
     "hydra": {
-      "serviceName": "prediction",
+      "serviceName": "indicators",
       "serviceIP": "",
-      "servicePort": 3020,
+      "servicePort": 3030,
       "serviceType": "",
       "serviceDescription": "",
       "type": "express",
