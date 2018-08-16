@@ -1,6 +1,7 @@
 /* eslint import/no-dynamic-require: 0 new-cap:0 */
 
 import fs from 'fs';
+import AdviceService from './advice.service';
 
 /**
  * Service that makes communication with all the strategies files
@@ -9,6 +10,7 @@ import fs from 'fs';
  */
 class StrategyLoaderService {
     constructor() {
+        this.advService = new AdviceService();
         this.strategiesBasePath = './build/src/strategies';
         this.strategiesDynamicPath = '../strategies';
         this.cache = [];
@@ -40,7 +42,7 @@ class StrategyLoaderService {
             this._getStrategiesFilesPath().then(files => {
                 files.forEach(x => {
                     const temp = require(`${this.strategiesDynamicPath}/${x}`);
-                    const instance = new temp.default();
+                    const instance = new temp.default(this.advService);
                     this.cache.push(instance);
                     instance.init();
                 });

@@ -1,7 +1,8 @@
 class Macd {
-    constructor() {
+    constructor(opt) {
         this.indicatorId = 'macd';
         this.candles = [];
+        this.opt = opt;
     }
 
     init() {
@@ -14,6 +15,7 @@ class Macd {
         console.log('---');
         console.log('update Macd');
         this.candles.push(candle);
+        this.opt.advice('ADVICE');
         console.log(this.candles);
         console.log('---');
     }

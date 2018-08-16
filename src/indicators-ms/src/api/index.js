@@ -4,6 +4,7 @@ import BodyParser from 'body-parser';
 import packageJson from '../../package.json';
 import Debug from '../tools/debug';
 import UpdatesController from './controllers/updates.controller';
+import StrategyLoaderService from '../services/strategy-loader.service';
 
 /**
  * Class that represents the whole application API setup
@@ -48,6 +49,12 @@ class Api {
         const app = hydraExpress.getExpressApp();
 
         app.use(BodyParser.json());
+        app.use((req, res, next) => {
+            const str = new StrategyLoaderService();
+            str.init();
+            req.strLoader = str;
+            next();
+        });
     }
 }
 
