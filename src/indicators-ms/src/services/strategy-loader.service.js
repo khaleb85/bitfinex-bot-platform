@@ -37,6 +37,12 @@ class StrategyLoaderService {
         });
     }
 
+    /**
+     * Register all strategies in the cache
+     *
+     * @memberof {StrategyLoaderService}
+     * @since 1.0.0
+     */
     init() {
         return new Promise(resolve => {
             this._getStrategiesFilesPath().then(files => {
