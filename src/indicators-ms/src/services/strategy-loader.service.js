@@ -13,7 +13,9 @@ class StrategyLoaderService {
         this.advService = new AdviceService();
         this.strategiesBasePath = './build/src/strategies';
         this.strategiesDynamicPath = '../strategies';
-        this.cache = [];
+        console.log(global.strategyCache);
+        if (!global.strategyCache) { global.strategyCache = []; }
+        console.log(global.strategyCache);
     }
 
     /**
@@ -26,8 +28,8 @@ class StrategyLoaderService {
      */
     runStrategiesMethod(method, data) {
         return new Promise(resolve => {
-            if (this.cache.length > 0) {
-                this.cache.forEach(instance => {
+            if (global.strategyCache.length > 0) {
+                global.strategyCache.forEach(instance => {
                     instance[method](data);
                 });
                 return resolve();
@@ -45,13 +47,17 @@ class StrategyLoaderService {
      */
     init() {
         return new Promise(resolve => {
+            if (global.strategyCache.length > 0) { return resolve(); }
+
             this._getStrategiesFilesPath().then(files => {
                 files.forEach(x => {
                     const temp = require(`${this.strategiesDynamicPath}/${x}`);
                     const instance = new temp.default(this.advService);
-                    this.cache.push(instance);
+                    global.strategyCache.push(instance);
                     instance.init();
                 });
+
+
                 return resolve();
             });
         });

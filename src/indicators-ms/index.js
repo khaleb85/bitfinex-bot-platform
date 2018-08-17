@@ -16,7 +16,7 @@ hydraConfig.hydra.redis.password = process.env.HYDRA_REDIS_PASS;
 
 const mProcess = new MultiProcess();
 mProcess.start(() => {
+}, () => {
     const api = new Api();
     api.start(hydraConfig);
-}, () => {
 });
