@@ -1,4 +1,6 @@
-/* eslint import/no-dynamic-require: 0 new-cap:0 */
+/* eslint no-underscore-dangle:0 */
+/* eslint import/no-dynamic-require:0 */
+/* eslint  new-cap:0  */
 
 import fs from 'fs';
 import AdviceService from './advice.service';
@@ -13,9 +15,8 @@ class StrategyLoaderService {
         this.advService = new AdviceService();
         this.strategiesBasePath = './build/src/strategies';
         this.strategiesDynamicPath = '../strategies';
-        console.log(global.strategyCache);
+
         if (!global.strategyCache) { global.strategyCache = []; }
-        console.log(global.strategyCache);
     }
 
     /**
@@ -27,6 +28,30 @@ class StrategyLoaderService {
      * @since 1.0.0
      */
     runStrategiesMethod(method, data) {
+        const self = this;
+        return new Promise(resolve => {
+            if (global.strategyCache.length === 0) {
+                self._init().then(() => {
+                    self._runAllStrategies(method, data);
+                    return resolve();
+                });
+            } else {
+                self._runAllStrategies(method, data).then(() => {
+                    return resolve();
+                });
+            }
+        });
+    }
+
+    /**
+     * Private method to run all the given method in all strategies
+     *
+     * @param {string} method
+     * @param {Any} data
+     * @memberof {StrategyLoaderService}
+     * @since 1.0.0
+     */
+    _runAllStrategies(method, data) {
         return new Promise(resolve => {
             if (global.strategyCache.length > 0) {
                 global.strategyCache.forEach(instance => {
@@ -34,8 +59,6 @@ class StrategyLoaderService {
                 });
                 return resolve();
             }
-
-            throw new Error('You should call the init method before run a strategy function');
         });
     }
 
@@ -45,7 +68,7 @@ class StrategyLoaderService {
      * @memberof {StrategyLoaderService}
      * @since 1.0.0
      */
-    init() {
+    _init() {
         return new Promise(resolve => {
             if (global.strategyCache.length > 0) { return resolve(); }
 

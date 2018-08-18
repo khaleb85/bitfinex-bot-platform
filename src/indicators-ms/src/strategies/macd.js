@@ -13,6 +13,7 @@ class Macd {
 
     update(candle) {
         console.log('---');
+        console.log(candle);
         console.log('update Macd');
         this.candles.push(candle);
         this.opt.advice('ADVICE');

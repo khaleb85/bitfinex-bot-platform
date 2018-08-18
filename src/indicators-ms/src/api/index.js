@@ -51,7 +51,6 @@ class Api {
         app.use(BodyParser.json());
         app.use((req, res, next) => {
             const str = new StrategyLoaderService();
-            str.init();
             req.strLoader = str;
             next();
         });
