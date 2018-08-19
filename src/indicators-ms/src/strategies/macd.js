@@ -16,7 +16,7 @@ class Macd {
         console.log(candle);
         console.log('update Macd');
         this.candles.push(candle);
-        this.opt.advice('ADVICE');
+        this.opt.buyAdvice(this.indicatorId);
         console.log(this.candles);
         console.log('---');
     }

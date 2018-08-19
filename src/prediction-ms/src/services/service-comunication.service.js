@@ -1,5 +1,6 @@
 import request from 'request-promise';
 import hydra from 'hydra';
+import Debug from '../tools/debug';
 
 /**
  * Service that make comunication with other microservices
@@ -18,6 +19,11 @@ class ServiceComunication {
     static makePostRequest(serviceName, endpoint, data) {
         return new Promise((resolve) => {
             this._discoveryServiceIp(serviceName).then(url => {
+                if (!url) {
+                    Debug.error(`The service ${serviceName} is innacesible at this moment.`);
+                    return resolve(null);
+                }
+
                 request.post({
                     url: `${url}${endpoint}`,
                     form: data,
@@ -38,6 +44,11 @@ class ServiceComunication {
     static makeGetRequest(serviceName, endpoint) {
         return new Promise((resolve) => {
             this._discoveryServiceIp(serviceName).then(url => {
+                if (!url) {
+                    Debug.error(`The service ${serviceName} is innacesible at this moment.`);
+                    return resolve(null);
+                }
+
                 request.get({
                     url: `${url}${endpoint}`,
                 }).then(html => {
@@ -67,6 +78,7 @@ class ServiceComunication {
                     return resolve(`http://${service[0].ip}:${service[0].port}`);
                 }
 
+                if (!service) { return resolve(null); }
                 return resolve(`${service.ip}:${service.port}`);
             });
         });

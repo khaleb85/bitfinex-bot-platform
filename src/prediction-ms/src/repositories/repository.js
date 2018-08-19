@@ -4,26 +4,39 @@ class Repository {
     /**
      * Open connection with database.
      */
-    openDbConnection() {
+    static _openDbConnection() {
         const con = process.env.RETHINKDB_CONNECTION;
-        console.log(con);
-        console.log(typeof con);
+        this.indicatorTable = 'indicators';
+        this.database = 'bitfinex';
         return r.connect(JSON.parse(con));
     }
 
     /**
-     * Returns last candles limited by quantity.
+     * Returns the selected indicator by Id
      *
-     * @param  {string} table
-     * @param  {number} qnt
-     * @param  {function} callBack
+     * @param {string} indicatorId
+     * @returns {Promise<Indicator>}
      */
-    getCandlesByTime(table, qnt, callBack) {
-        return this.openDbConnection().then(conn => {
-            r.table(table)
-                .orderBy(r.desc('time'))
-                .limit(qnt)
-                .run(conn, callBack);
+    static getIndicator(indicatorId) {
+        return new Promise(resolve => {
+            this._openDbConnection().then(conn => {
+                r.db(this.database).table(this.indicatorTable)
+                    .filter({ indicatorId })
+                    .run(conn, resolve);
+            });
+        });
+    }
+
+    static insertIndicator(indicatorId) {
+        return new Promise(resolve => {
+            this._openDbConnection().then(conn => {
+                let weight = process.env.DEFAULT_WEIGHT;
+                if (!weight) { weight = 1; }
+
+                r.db(this.database).table(this.indicatorTable)
+                    .insert({ indicatorId, weight })
+                    .run(conn, resolve);
+            });
         });
     }
 
@@ -38,8 +51,8 @@ class Repository {
      * @param  {function} callBack
      */
     onInsert(table, filter, callBack) {
-        this.openDbConnection().then(conn => {
-            const changes = r.table(table).changes();
+        this._openDbConnection().then(conn => {
+            const changes = r.db(this.database).table(table).changes();
             if (filter !== null) changes.filter(filter);
 
             changes.run(conn, (err, cursor) => {
@@ -66,8 +79,8 @@ class Repository {
      * @param  {json} item
      */
     insert(table, item) {
-        this.openDbConnection().then(conn => {
-            r.table(table)
+        this._openDbConnection().then(conn => {
+            r.db(this.database).table(table)
                 .insert(item)
                 .run(conn);
         });

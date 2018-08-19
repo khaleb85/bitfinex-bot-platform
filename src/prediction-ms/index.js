@@ -3,7 +3,7 @@ import hydra from 'hydra';
 import hydraConfig from './hydra.json';
 import MultiProcess from './src/tools/multi-process';
 import Api from './src/api';
-import FoxbitMigration from './src/repositories/migrations/foxbit-migration';
+import BitfinexMigration from './src/repositories/migrations/bitfinex-migration';
 
 dotenv.config();
 
@@ -16,9 +16,9 @@ mProcess.start(() => {
     const api = new Api();
     api.start(hydraConfig);
 }, () => {
-    const migration = new FoxbitMigration();
-    migration.createDatabase('foxbit').then(() => {
-        migration.createTable('foxbit', 'Candles');
+    const migration = new BitfinexMigration();
+    migration.createDatabase('bitfinex').then(() => {
+        migration.createTable('bitfinex', 'indicators');
         hydra.init(hydraConfig);
     });
 });
