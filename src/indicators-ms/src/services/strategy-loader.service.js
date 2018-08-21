@@ -43,6 +43,13 @@ class StrategyLoaderService {
         });
     }
 
+    getAllStrategies() {
+        return {
+            total: global.strategyCache.length,
+            strategiesIds: global.strategyCache.map(x => x.indicatorId),
+        };
+    }
+
     /**
      * Private method to run all the given method in all strategies
      *

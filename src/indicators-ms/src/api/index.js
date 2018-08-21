@@ -5,7 +5,7 @@ import packageJson from '../../package.json';
 import Debug from '../tools/debug';
 import UpdatesController from './controllers/updates.controller';
 import StrategyLoaderService from '../services/strategy-loader.service';
-
+import indicatorsController from './controllers/indicators.controller';
 /**
  * Class that represents the whole application API setup
  *
@@ -36,6 +36,7 @@ class Api {
     registerRoutesCallback() {
         hydraExpress.registerRoutes({
             '/updates': UpdatesController,
+            '/indicators': indicatorsController,
         });
     }
 
@@ -51,6 +52,7 @@ class Api {
         app.use(BodyParser.json());
         app.use((req, res, next) => {
             const str = new StrategyLoaderService();
+            str._init();
             req.strLoader = str;
             next();
         });

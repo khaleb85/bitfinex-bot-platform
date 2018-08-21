@@ -1,12 +1,18 @@
 import express from 'express';
 import Debug from '../../tools/debug';
 import Indicator from '../../models/indicator';
+import AdviceService from '../../services/advice.service';
 
 const router = new express.Router();
 
 router.post('/buy', (req, res) => {
     Debug.success('buy advice');
-    Indicator.getIndicatorInDb(req.body.indicatorId);
+
+    //Indicator.getIndicatorInDb(req.body.indicatorId);
+    AdviceService.storeAdvice(req.body)
+        .then(() => {
+            AdviceService.verifyWeight(req.body.timeframe);
+        });
 
     res.json({
         status: 'received',

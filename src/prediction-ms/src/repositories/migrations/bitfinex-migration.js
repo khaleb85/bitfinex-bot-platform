@@ -18,7 +18,7 @@ class BitfinexMigration {
      * @param  {string} dbName
      */
     createDatabase(dbName) {
-        return Repository._openDbConnection().then(conn => {
+        return Repository.openDbConnection().then(conn => {
             r.dbList().run(conn).then(dbs => {
                 if (dbs.indexOf(dbName) === -1) {
                     Debug.highlight(`Database ${dbName}, created!`);
@@ -35,7 +35,7 @@ class BitfinexMigration {
      * @param  {string} tableName
      */
     createTable(database, tableName) {
-        return Repository._openDbConnection().then(conn => {
+        return Repository.openDbConnection().then(conn => {
             r.db(database).tableList().run(conn).then(tbs => {
                 if (tbs.indexOf(tableName) === -1) {
                     Debug.highlight(`Table ${tableName}, created in the ${database} database!`);

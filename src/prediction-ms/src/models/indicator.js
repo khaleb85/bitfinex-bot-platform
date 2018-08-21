@@ -9,11 +9,13 @@ class Indicator {
     static getIndicatorInDb(indicatorId) {
         if (!indicatorId) { return; }
 
-        Repository.getIndicator(indicatorId).then(data => {
-            console.log(data);
-            if (!data) {
-                Repository.insertIndicator(indicatorId);
-            }
+        return new Promise(resolve => {
+            Repository.getIndicator(indicatorId).then(data => {
+                if (!data) {
+                    Repository.insertIndicator(indicatorId);
+                }
+                return resolve(data);
+            });
         });
     }
 }

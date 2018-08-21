@@ -17,8 +17,10 @@ mProcess.start(() => {
     api.start(hydraConfig);
 }, () => {
     const migration = new BitfinexMigration();
-    migration.createDatabase('bitfinex').then(() => {
-        migration.createTable('bitfinex', 'indicators');
+    const databaseName = 'bitfinex';
+    migration.createDatabase(databaseName).then(() => {
+        migration.createTable(databaseName, 'indicators');
+        migration.createTable(databaseName, 'advices');
         hydra.init(hydraConfig);
     });
 });
