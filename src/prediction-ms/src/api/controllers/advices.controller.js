@@ -9,7 +9,9 @@ router.post('/buy', (req, res) => {
     Debug.success('buy advice');
 
     //Indicator.getIndicatorInDb(req.body.indicatorId);
-    AdviceService.storeAdvice(req.body)
+    let json = req.body;
+    json.type = 'buy';
+    AdviceService.storeAdvice(json)
         .then(() => {
             AdviceService.verifyWeight(req.body.timeframe);
         });

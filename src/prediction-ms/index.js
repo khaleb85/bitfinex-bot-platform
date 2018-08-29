@@ -4,6 +4,8 @@ import hydraConfig from './hydra.json';
 import MultiProcess from './src/tools/multi-process';
 import Api from './src/api';
 import BitfinexMigration from './src/repositories/migrations/bitfinex-migration';
+import IndicatorService from './src/services/indicators.service';
+import IndicatorsRepository from './src/repositories/indicator.repository';
 
 dotenv.config();
 
@@ -21,6 +23,7 @@ mProcess.start(() => {
     migration.createDatabase(databaseName).then(() => {
         migration.createTable(databaseName, 'indicators');
         migration.createTable(databaseName, 'advices');
+
         hydra.init(hydraConfig);
     });
 });
