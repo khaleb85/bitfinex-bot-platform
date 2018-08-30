@@ -2,6 +2,7 @@ import AdviceRepository from '../repositories/advice.repository';
 import IndicatorsRepository from '../repositories/indicator.repository';
 import Repository from '../repositories/repository';
 import ComunicationService from '../services/service-comunication.service';
+import SignalService from './signal.service';
 
 class AdviceService {
     static storeAdvice(advice) {
@@ -9,7 +10,7 @@ class AdviceService {
             AdviceRepository.getAdvicesByTimeFrame(advice.timeframe)
                 .then(adv => {
                     if (adv.length > 0) {
-                        return resolve();
+                        return resolve(false);
                     } // Ignore advice if it already exists
 
                     IndicatorsRepository.getIndicator(advice.indicatorId).then(x => {
@@ -17,10 +18,12 @@ class AdviceService {
                             IndicatorsRepository.insertIndicator(advice.indicatorId);
                         }
 
-                        advice.indicatorId = x[0].id;
+                        if (x[0]) {
+                            advice.indicatorId = x[0].id;
+                        }
 
                         Repository.insert(AdviceRepository.advTable, advice).then(() => {
-                            return resolve();
+                            return resolve(true);
                         });
                     });
                 });
@@ -36,14 +39,12 @@ class AdviceService {
                     const sellWeight = this.getAdvicesWeightByType(advices, 'sell');
 
                     if (sellWeight >= (totalWeight / 2)) {
-                        console.log('sell signal');
+                        SignalService.sendSellSignal();
                     } else
                     if (buyWeight >= (totalWeight / 2)) {
-                        console.log('buy signal');
+                        SignalService.sendBuySignal();
                     }
-       
-                    console.log(advices);
-                    console.log(totalWeight);
+                    
                     return resolve();
                 });
             });
@@ -55,10 +56,6 @@ class AdviceService {
             .filter(x => x.type === type)
             .map(x => x.weight)
             .reduce((a, b) => parseInt(a) + parseInt(b), 0);
-    }
-
-    static getAllTimeframeAdvices(timeframe) {
-
     }
 
     static getTotalWeight() {

@@ -1,17 +1,24 @@
 import ServiceComunication from '../services/service-comunication.service';
 
 class AdviceServicee {
-    buyAdvice(strategyId) {
+    constructor(strategyId) {
+        this.strategyId = strategyId;
+    }
+
+
+    buyAdvice(timeframe) {
         const data = {
-            strategyId,
+            indicatorId: this.strategyId,
+            timeframe,
         };
 
         ServiceComunication.makePostRequest('prediction', '/advice/buy', data);
     }
 
-    sellAdvice(strategyId) {
+    sellAdvice(timeframe) {
         const data = {
-            strategyId,
+            indicatorId: this.strategyId,
+            timeframe,
         };
 
         ServiceComunication.makePostRequest('prediction', '/advice/sell', data);

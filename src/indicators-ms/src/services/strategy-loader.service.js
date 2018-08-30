@@ -12,7 +12,6 @@ import AdviceService from './advice.service';
  */
 class StrategyLoaderService {
     constructor() {
-        this.advService = new AdviceService();
         this.strategiesBasePath = './build/src/strategies';
         this.strategiesDynamicPath = '../strategies';
 
@@ -82,7 +81,7 @@ class StrategyLoaderService {
             this._getStrategiesFilesPath().then(files => {
                 files.forEach(x => {
                     const temp = require(`${this.strategiesDynamicPath}/${x}`);
-                    const instance = new temp.default(this.advService);
+                    const instance = new temp.default(AdviceService);
                     global.strategyCache.push(instance);
                     instance.init();
                 });
