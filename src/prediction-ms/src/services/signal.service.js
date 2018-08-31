@@ -1,10 +1,15 @@
+import SignalRepository from '../repositories/signal.repository';
+import Singal from '../models/signal';
+
 class SignalService {
-    static sendBuySignal() {
-        console.log('buy signal');
+    static sendBuySignal(timeframe) {
+        const signal = new Singal('buy', timeframe); 
+        return SignalRepository.storeSignal(signal);
     }
 
-    static sendSellSignal() {
-        console.log('sell Signal');
+    static sendSellSignal(timeframe) {
+        const signal = new Singal('buy', timeframe); 
+        return SignalRepository.storeSignal(signal);
     }
 }
 

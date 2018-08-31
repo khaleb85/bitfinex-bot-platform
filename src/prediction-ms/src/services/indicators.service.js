@@ -2,13 +2,11 @@ import ServiceComunication from './service-comunication.service';
 
 class IndicatorService {
     sendUpdate(candle) {
-        ServiceComunication.makePostRequest('indicators', '/updates/change', candle)
-            .then(x => console.log(x));
+        return ServiceComunication.makePostRequest('indicators', '/updates/change', candle);
     }
 
     sendComplete(candle) {
-        ServiceComunication.makePostRequest('indicators', '/updates/complete', candle)
-            .then(x => console.log(x));
+        return ServiceComunication.makePostRequest('indicators', '/updates/complete', candle);
     }
 
     getAllIndicators() {

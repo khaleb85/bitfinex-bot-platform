@@ -76,8 +76,9 @@ class StrategyLoaderService {
      */
     _init() {
         return new Promise(resolve => {
-            if (global.strategyCache.length > 0) { return resolve(); }
-
+            if (global.hasInited === true || global.strategyCache.length > 0) { return resolve(); }
+            
+            global.hasInited = true;
             this._getStrategiesFilesPath().then(files => {
                 files.forEach(x => {
                     const temp = require(`${this.strategiesDynamicPath}/${x}`);

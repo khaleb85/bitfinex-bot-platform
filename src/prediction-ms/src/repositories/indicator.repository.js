@@ -2,6 +2,8 @@ import r from 'rethinkdb';
 import Repository from './repository';
 
 class IndicatorRepository extends Repository {
+    static get advTable() { return 'advices'}
+
     /**
      * Returns the selected indicator by Id
      *

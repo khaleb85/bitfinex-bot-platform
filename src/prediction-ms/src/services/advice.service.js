@@ -9,22 +9,23 @@ class AdviceService {
         return new Promise(resolve => {
             AdviceRepository.getAdvicesByTimeFrame(advice.timeframe)
                 .then(adv => {
-                    if (adv.length > 0) {
+                    if (adv.length !== 0) {
                         return resolve(false);
                     } // Ignore advice if it already exists
 
-                    IndicatorsRepository.getIndicator(advice.indicatorId).then(x => {
-                        if (x.length === 0) {
+                    IndicatorsRepository.getIndicator(advice.indicatorId).then(indicator => {
+                        if (indicator.length === 0) {
                             IndicatorsRepository.insertIndicator(advice.indicatorId);
                         }
 
-                        if (x[0]) {
-                            advice.indicatorId = x[0].id;
+                        if (indicator[0]) {
+                            const temp = advice;
+                            temp.indicatorId = indicator[0].id;
+                            
+                            Repository.insert(AdviceRepository.advTable, temp).then(() => {
+                                return resolve(true);
+                            });
                         }
-
-                        Repository.insert(AdviceRepository.advTable, advice).then(() => {
-                            return resolve(true);
-                        });
                     });
                 });
         });
@@ -39,10 +40,10 @@ class AdviceService {
                     const sellWeight = this.getAdvicesWeightByType(advices, 'sell');
 
                     if (sellWeight >= (totalWeight / 2)) {
-                        SignalService.sendSellSignal();
+                        SignalService.sendSellSignal(timeframe);
                     } else
                     if (buyWeight >= (totalWeight / 2)) {
-                        SignalService.sendBuySignal();
+                        SignalService.sendBuySignal(timeframe);
                     }
                     
                     return resolve();
