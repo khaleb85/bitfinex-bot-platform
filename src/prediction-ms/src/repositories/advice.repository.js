@@ -48,7 +48,7 @@ class AdviceRepository {
         return new Promise(resolve => {
             Repository.openDbConnection().then(conn => {
                 r.db(this.database).table(this.advTable)
-                    .orderBy(r.desc('timeframe')).limit(3)
+                    .orderBy(r.desc('timeframe')).limit(10)
                     .run(conn, (err, cursor) => {
                         if (err) { throw err; }
 
@@ -56,7 +56,7 @@ class AdviceRepository {
                             if (errz) throw errz;
 
                             for (let i = 0; i < results.length; i++) {
-                                if (results[i].timeframe === timeframe) {
+                                if (results[i].timeframe === parseInt(timeframe)) {
                                     return resolve(results[i + 1]);
                                 }
                             }

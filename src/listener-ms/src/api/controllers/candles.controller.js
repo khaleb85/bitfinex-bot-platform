@@ -24,6 +24,7 @@ router.get('/', (req, res) => {
     if (!req.query.timeframe) {
         return res.json('not found');
     }
+    console.log(req.query.timeframe);
 
     service.getCandle(req.query.timeframe).then(candle => {
         return res.json(candle);

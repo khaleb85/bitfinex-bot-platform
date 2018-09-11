@@ -48,7 +48,7 @@ class BitfinexService {
     getCandle(timeframe) {
         return new Promise(resolve => {
             let body = '';
-            request.get(`${bitfinexConf.basePublicRestUrl}/v2/candles/trade:${bitfinexConf.timeFrame}:${bitfinexConf.symbol}/hist?start=${timeframe}&limit=1`)
+            request.get(`${bitfinexConf.basePublicRestUrl}/v2/candles/trade:${bitfinexConf.timeFrame}:${bitfinexConf.symbol}/hist?start=${timeframe}&limit=1&sort=1`)
                 .on('response', (response) => {
                     response.on('data', chunk => {
                         if (Buffer.isBuffer(chunk)) {

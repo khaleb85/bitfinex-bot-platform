@@ -23,6 +23,7 @@ class AdviceService {
                         if (indicator[0]) {
                             const temp = advice;
                             temp.indicatorId = indicator[0].id;
+                            temp.timeframe = parseInt(temp.timeframe);
 
                             Repository.insert(AdviceRepository.advTable, temp).then(() => {
                                 return resolve(true);
@@ -63,6 +64,7 @@ class AdviceService {
                     this.getCandle(adv.timeframe).then(previousCandleStr => {
                         const currentCandle = JSON.parse(currentCandleStr);
                         const previousCandle = JSON.parse(previousCandleStr);
+                        Debug.error(JSON.stringify(currentCandle));
 
                         const currentClose = parseFloat(currentCandle.close);
                         const previousClose = parseFloat(previousCandle.close);

@@ -1,5 +1,6 @@
 import IndicatorRepository from '../repositories/indicator.repository';
 import ServiceComunication from './service-comunication.service';
+import Debug from '../tools/debug';
 
 class IndicatorService {
     static get weightBias() { return parseFloat(process.env.WEIGHT_BIAS); }
@@ -15,21 +16,19 @@ class IndicatorService {
     static addWeight(indicatorId) {
         IndicatorRepository.getIndicatorByTableId(indicatorId).then(indicator => {
             const weight = parseFloat(indicator.weight) + this.weightBias;
-            IndicatorRepository.updateWeight(indicator.id, weight).then(data => {
-                console.log(data);
+            IndicatorRepository.updateWeight(indicator.id, weight).then(() => {
+                Debug.highlight(`Added ${this.weightBias} weight to the indicator ${indicator.indicatorId}, now the total weight is ${weight}.`);
             });
         });
-        console.log('add weight!');
     }
 
     static removeWeight(indicatorId) {
         IndicatorRepository.getIndicatorByTableId(indicatorId).then(indicator => {
             const weight = parseFloat(indicator.weight) + this.weightBias;
-            IndicatorRepository.updateWeight(indicator.id, weight).then(data => {
-                console.log(data);
+            IndicatorRepository.updateWeight(indicator.id, weight).then(() => {
+                Debug.highlight(`Added ${this.weightBias} weight to the indicator ${indicator.indicatorId}, now the total weight is ${weight}.`);
             });
         });
-        console.log('remove Weight!');
     }
 
     getAllIndicators() {
