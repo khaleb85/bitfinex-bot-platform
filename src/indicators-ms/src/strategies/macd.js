@@ -14,7 +14,7 @@ class Macd {
         console.log('---');
         console.log('update Macd');
         this.candles.push(candle);
-        this.opt.buyAdvice(1534798800000);
+        this.opt.buyAdvice(1536609600000);
     }
 
     complete(candle) {

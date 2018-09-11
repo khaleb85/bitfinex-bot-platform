@@ -43,6 +43,29 @@ class AdviceRepository {
             });
         });
     }
+
+    static getPreviousAdvice(timeframe) {
+        return new Promise(resolve => {
+            Repository.openDbConnection().then(conn => {
+                r.db(this.database).table(this.advTable)
+                    .orderBy(r.desc('timeframe')).limit(3)
+                    .run(conn, (err, cursor) => {
+                        if (err) { throw err; }
+
+                        cursor.toArray((errz, results) => {
+                            if (errz) throw errz;
+
+                            for (let i = 0; i < results.length; i++) {
+                                if (results[i].timeframe === timeframe) {
+                                    return resolve(results[i + 1]);
+                                }
+                            }
+                        });
+                    });
+            });
+        });
+    }
+
 }
 
 export default AdviceRepository;

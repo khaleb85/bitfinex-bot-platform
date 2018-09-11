@@ -45,10 +45,39 @@ class AdviceService {
                     if (buyWeight >= (totalWeight / 2)) {
                         SignalService.sendBuySignal(timeframe);
                     }
-                    
+                
                     return resolve();
                 });
             });
+        });
+    }
+
+    static ajustWeight(currentTimeframe) {
+        AdviceRepository.getPreviousAdvice(currentTimeframe).then(adv => {
+            this.getCandle(currentTimeframe).then(candle => {
+                console.log(candle);
+                if (adv.type === 'buy') {
+                    if (candle.close >= (candle.close + process.env.TRASHHOLDER)) {
+
+                    } else{
+                        
+                    }
+                } else {
+                
+                }
+            });
+            //if (adv.type === 'buy') {
+            //} else {
+            //}
+        });
+    }
+
+    static getCandle(timeframe) {
+        return new Promise(resolve => {
+            ComunicationService.makeGetRequest('listener', `/candles?timeframe=${timeframe}`)
+                .then(candle => {
+                    return resolve(candle);
+                });
         });
     }
 

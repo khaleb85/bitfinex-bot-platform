@@ -6,9 +6,10 @@ const router = new express.Router();
 
 router.post('/buy', (req, res) => {
     Debug.success('buy advice');
-    
     let json = req.body;
     json.type = 'buy';
+
+    AdviceService.ajustWeight(req.body.timeframe);
     AdviceService.storeAdvice(json)
         .then(added => {
             if (added) {

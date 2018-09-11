@@ -15,4 +15,19 @@ router.get('/last', (req, res) => {
     });
 });
 
+/**
+ * Returns the request candle by timeframe
+ *
+ * @since 1.0.0
+ */
+router.get('/', (req, res) => {
+    if (!req.query.timeframe) {
+        return res.json('not found');
+    }
+
+    service.getCandle(req.query.timeframe).then(candle => {
+        return res.json(candle);
+    });
+});
+
 export default router;
