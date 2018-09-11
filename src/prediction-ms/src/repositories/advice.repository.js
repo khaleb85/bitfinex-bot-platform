@@ -60,6 +60,7 @@ class AdviceRepository {
                                     return resolve(results[i + 1]);
                                 }
                             }
+                            return resolve(results[1]);
                         });
                     });
             });

@@ -5,17 +5,16 @@ import AdviceService from '../../services/advice.service';
 const router = new express.Router();
 
 router.post('/buy', (req, res) => {
-    Debug.success('buy advice');
-    let json = req.body;
+    Debug.success('Buy Advice - Received');
+    const json = req.body;
     json.type = 'buy';
 
-    AdviceService.ajustWeight(req.body.timeframe);
-    AdviceService.storeAdvice(json)
-        .then(added => {
-            if (added) {
-                AdviceService.verifyWeight(req.body.timeframe);
-            }
-        });
+    AdviceService.storeAdvice(json).then(added => {
+        console.log(added);
+        if (added) {
+            AdviceService.verifyWeight(req.body.timeframe);
+        }
+    });
 
     res.json({
         status: 'received',
@@ -23,7 +22,16 @@ router.post('/buy', (req, res) => {
 });
 
 router.post('/sell', (req, res) => {
-    Debug.success('sell advice');
+    Debug.success('Sell Advice - Received');
+    const json = req.body;
+    json.type = 'sell';
+
+    AdviceService.storeAdvice(json).then(added => {
+        if (added) {
+            AdviceService.verifyWeight(req.body.timeframe);
+        }
+    });
+
     res.json({
         status: 'received',
     });

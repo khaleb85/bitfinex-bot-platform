@@ -60,7 +60,7 @@ class BitfinexService {
 
                     response.on('end', () => {
                         const arr = JSON.parse(body);
-                        const candle = Candle.create(arr);
+                        const candle = Candle.create(...arr);
                         resolve(candle);
                     });
                 });

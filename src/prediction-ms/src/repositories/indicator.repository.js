@@ -2,7 +2,7 @@ import r from 'rethinkdb';
 import Repository from './repository';
 
 class IndicatorRepository extends Repository {
-    static get advTable() { return 'advices'}
+    static get advTable() { return 'advices'; }
 
     /**
      * Returns the selected indicator by Id
@@ -23,6 +23,46 @@ class IndicatorRepository extends Repository {
 
                             resolve(results);
                         });
+                    });
+            });
+        });
+    }
+
+    /**
+     * Returns the selected indicator by table Id
+     *
+     * @param {string} indicatorId
+     * @returns {Promise<Indicator>}
+     */
+    static getIndicatorByTableId(indicatorTableId) {
+        return new Promise(resolve => {
+            this.openDbConnection().then(conn => {
+                r.db(this.database).table(this.indicatorTable)
+                    .get(indicatorTableId)
+                    .run(conn, (err, cursor) => {
+                        if (err) { throw err; }
+
+                        return resolve(cursor);
+                    });
+            });
+        });
+    }
+
+    /**
+     * Update the weight of a indicator
+     *
+     * @param {string} indicatorId
+     * @param {string} weight
+     * @returns {Promise<Indicator>}
+     */
+    static updateWeight(indicatorId, weight) {
+        return new Promise(resolve => {
+            this.openDbConnection().then(con => {
+                r.db(this.database).table(this.indicatorTable)
+                    .get(indicatorId).update({ weight }).run(con, (err, cursor) => {
+                        if (err) { throw err; }
+
+                        return resolve(cursor);
                     });
             });
         });

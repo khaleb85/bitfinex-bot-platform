@@ -1,8 +1,10 @@
 import AdviceRepository from '../repositories/advice.repository';
 import IndicatorsRepository from '../repositories/indicator.repository';
 import Repository from '../repositories/repository';
+import IndicatorService from './indicators.service';
 import ComunicationService from '../services/service-comunication.service';
 import SignalService from './signal.service';
+import Debug from '../tools/debug';
 
 class AdviceService {
     static storeAdvice(advice) {
@@ -21,7 +23,7 @@ class AdviceService {
                         if (indicator[0]) {
                             const temp = advice;
                             temp.indicatorId = indicator[0].id;
-                            
+
                             Repository.insert(AdviceRepository.advTable, temp).then(() => {
                                 return resolve(true);
                             });
@@ -45,31 +47,49 @@ class AdviceService {
                     if (buyWeight >= (totalWeight / 2)) {
                         SignalService.sendBuySignal(timeframe);
                     }
-                
-                    return resolve();
+
+                    this._ajustWeight(timeframe).then(() => {
+                        return resolve();
+                    });
                 });
             });
         });
     }
 
-    static ajustWeight(currentTimeframe) {
-        AdviceRepository.getPreviousAdvice(currentTimeframe).then(adv => {
-            this.getCandle(currentTimeframe).then(candle => {
-                console.log(candle);
-                if (adv.type === 'buy') {
-                    if (candle.close >= (candle.close + process.env.TRASHHOLDER)) {
+    static _ajustWeight(currentTimeframe) {
+        return new Promise(resolve => {
+            AdviceRepository.getPreviousAdvice(currentTimeframe).then(adv => {
+                this.getCandle(currentTimeframe).then(currentCandleStr => {
+                    this.getCandle(adv.timeframe).then(previousCandleStr => {
+                        const currentCandle = JSON.parse(currentCandleStr);
+                        const previousCandle = JSON.parse(previousCandleStr);
 
-                    } else{
-                        
-                    }
-                } else {
-                
-                }
+                        const currentClose = parseFloat(currentCandle.close);
+                        const previousClose = parseFloat(previousCandle.close);
+                        const trashHolder = parseFloat(process.env.TRASHHOLDER);
+                        let isToAdd = false;
+
+                        Debug.log(`Previous close: ${previousClose} / Current close: ${currentClose}`);
+                        if (adv.type === 'buy') {
+                            isToAdd = currentClose >= (previousClose + trashHolder);
+                        } else {
+                            isToAdd = currentClose <= (previousClose - trashHolder);
+                        }
+
+                        this._changeIndicatorWeight(isToAdd, adv.indicatorId);
+                        return resolve();
+                    });
+                });
             });
-            //if (adv.type === 'buy') {
-            //} else {
-            //}
         });
+    }
+
+    static _changeIndicatorWeight(isToAdd, indicatorId) {
+        if (isToAdd) {
+            IndicatorService.addWeight(indicatorId);
+        } else {
+            IndicatorService.removeWeight(indicatorId);
+        }
     }
 
     static getCandle(timeframe) {
