@@ -5,6 +5,7 @@ import packageJson from '../../package.json';
 import Debug from '../tools/debug';
 import UpdatesController from './controllers/updates.controller';
 import AdvicesController from './controllers/advices.controller';
+import SignalController from './controllers/signals.controller';
 
 /**
  * Class that represents the whole application API setup
@@ -37,6 +38,7 @@ class Api {
         hydraExpress.registerRoutes({
             '/updates': UpdatesController,
             '/advice': AdvicesController,
+            '/signal': SignalController,
         });
     }
 
