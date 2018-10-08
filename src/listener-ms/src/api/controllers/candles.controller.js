@@ -15,6 +15,12 @@ router.get('/last', (req, res) => {
     });
 });
 
+router.get('/hist', (req, res) => {
+    service.getHist().then(candles => {
+        return res.json(candles);
+    });
+});
+
 /**
  * Returns the request candle by timeframe
  *
