@@ -22,6 +22,7 @@
     "hydra": "^1.7.0",
     "hydra-express": "^1.7.0",
     "lodash": "^4.17.5",
+    "macd": "^1.0.2",
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
     "rethinkdb": "^2.3.3",

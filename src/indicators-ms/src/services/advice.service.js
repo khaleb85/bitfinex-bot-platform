@@ -5,7 +5,6 @@ class AdviceServicee {
         this.strategyId = strategyId;
     }
 
-
     buyAdvice(timeframe) {
         const data = {
             indicatorId: this.strategyId,

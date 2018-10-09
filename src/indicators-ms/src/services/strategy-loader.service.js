@@ -3,7 +3,7 @@
 /* eslint  new-cap:0  */
 
 import fs from 'fs';
-import AdviceService from './advice.service';
+import Opt from '../models/opt';
 
 /**
  * Service that makes communication with all the strategies files
@@ -77,16 +77,15 @@ class StrategyLoaderService {
     _init() {
         return new Promise(resolve => {
             if (global.hasInited === true || global.strategyCache.length > 0) { return resolve(); }
-            
+
             global.hasInited = true;
             this._getStrategiesFilesPath().then(files => {
                 files.forEach(x => {
                     const temp = require(`${this.strategiesDynamicPath}/${x}`);
-                    const instance = new temp.default(AdviceService);
+                    const instance = new temp.default(Opt);
                     global.strategyCache.push(instance);
                     instance.init();
                 });
-
 
                 return resolve();
             });

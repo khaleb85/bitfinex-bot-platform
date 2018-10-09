@@ -22,10 +22,10 @@ mProcess.start(() => {
     new BitfinexWsService().start()
         .on('change', candle => {
             Debug.log(`change: ${JSON.stringify(candle)}`);
-            // ServiceComunicationService.makePostRequest('prediction', '/updates/change', candle);
+            ServiceComunicationService.makePostRequest('prediction', '/updates/change', candle);
         })
         .on('complete', candle => {
             Debug.highlight(`complete: ${JSON.stringify(candle)}`);
-            // ServiceComunicationService.makePostRequest('prediction', '/updates/complete', candle);
+            ServiceComunicationService.makePostRequest('prediction', '/updates/complete', candle);
         });
 });
