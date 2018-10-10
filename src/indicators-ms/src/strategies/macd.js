@@ -36,6 +36,10 @@ class Macd {
 
     complete(candle) {
         Debug.success('Complete MACD');
+        this.addOrUpdateCandle(candle);
+    }
+
+    addOrUpdateCandle(candle) {
         const index = this.candles.findIndex(x => x.msTimeStamp === candle.msTimeStamp);
 
         if (index === -1) {
