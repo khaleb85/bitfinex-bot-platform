@@ -2,7 +2,7 @@ import Debug from '../tools/debug';
 
 class ThreeWhiteSoldiers {
     constructor(Opt) {
-        this.indicatorId = 'macd';
+        this.indicatorId = 'threeWhiteSoldiers';
         this.candles = [];
         this.opt = new Opt(this.indicatorId);
     }
