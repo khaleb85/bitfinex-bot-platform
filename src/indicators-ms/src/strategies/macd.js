@@ -7,7 +7,7 @@ class Macd {
         this.candles = [];
         this.opt = new Opt(this.indicatorId);
 
-        this.threshold = 4;
+        this.threshold = -1;
     }
 
     init() {
@@ -19,17 +19,16 @@ class Macd {
 
     update(candle) {
         Debug.log('Update MACD');
-        const result = macd(this.candles.map(x => x.close), 26, 12, 9);
+        const result = macd(this.candles.map(x => x.close), 12, 6, 3);
 
         if (!result.histogram) { return; }
 
         const lastThree = result.histogram.slice(Math.max(result.histogram.length - 3, 1));
-
-        if (lastThree[0] > this.threshold && lastThree[1] > lastThree[0] && lastThree[2] > lastThree[1]) {
+        if (lastThree[1] > lastThree[0] && lastThree[2] > lastThree[1]) {
             this.opt.advices.buyAdvice(candle.msTimeStamp);
         }
 
-        if (lastThree[0] < this.threshold - (2 * this.threshold) && lastThree[1] < lastThree[0] && lastThree[2] < lastThree[1]) {
+        if (lastThree[1] < lastThree[0] && lastThree[2] < lastThree[1]) {
             this.opt.advices.sellAdvice(candle.msTimeStamp);
         }
     }

@@ -10,7 +10,6 @@ router.post('/buy', (req, res) => {
     json.type = 'buy';
 
     AdviceService.storeAdvice(json).then(added => {
-        console.log(added);
         if (added) {
             AdviceService.verifyWeight(req.body.timeframe);
         }

@@ -68,6 +68,7 @@ class ServiceComunication {
         return new Promise((resolve, reject) => {
             hydra.getServicePresence(serviceName).then(service => {
                 if (Array.isArray(service)) {
+                    if (!service[0] || !service[0].ip) { return resolve(); }
                     const uniqueIps = [...new Set(service.map(item => item.Name))];
                     const uniquePorts = [...new Set(service.map(item => item.Name))];
 
@@ -78,7 +79,7 @@ class ServiceComunication {
                     return resolve(`http://${service[0].ip}:${service[0].port}`);
                 }
 
-                if (!service) { return resolve(null); }
+                if (!service || !service.ip) { return resolve(null); }
                 return resolve(`${service.ip}:${service.port}`);
             });
         });

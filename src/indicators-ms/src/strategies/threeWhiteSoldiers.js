@@ -20,17 +20,17 @@ class ThreeWhiteSoldiers {
 
         const lastThree = this.candles.slice(this.candles.length - 3);
 
-        const firstdaysOpen   = lastThree.open[0];
-        const firstdaysClose  = lastThree.close[0];
-        const firstdaysHigh   = lastThree.high[0];
+        const firstdaysOpen   = lastThree[0].open;
+        const firstdaysClose  = lastThree[0].close;
+        const firstdaysHigh   = lastThree[0].high;
 
-        const seconddaysOpen  = lastThree.open[1];
-        const seconddaysClose = lastThree.close[1];
-        const seconddaysHigh  = lastThree.high[1];
+        const seconddaysOpen  = lastThree[1].open;
+        const seconddaysClose = lastThree[1].close;
+        const seconddaysHigh  = lastThree[1].high;
 
-        const thirddaysOpen   = lastThree.open[2];
-        const thirddaysClose  = lastThree.close[2];
-        const thirddaysHigh   = lastThree.high[2];
+        const thirddaysOpen   = lastThree[2].open;
+        const thirddaysClose  = lastThree[2].close;
+        const thirddaysHigh   = lastThree[2].high;
 
         const isUpTrend = seconddaysHigh > firstdaysHigh &&
                             thirddaysHigh > seconddaysHigh;
@@ -42,7 +42,7 @@ class ThreeWhiteSoldiers {
                                         seconddaysOpen <  firstdaysHigh &&
                                         seconddaysHigh > thirddaysOpen  &&
                                         thirddaysOpen < seconddaysClose;
-
+        console.log(`isUpTrend:${isUpTrend} isAllBullish:${isAllBullish} doesOpenWithinPreviousBody:${doesOpenWithinPreviousBody}`);
         if (isUpTrend && isAllBullish && doesOpenWithinPreviousBody) {
             this.opt.advices.buyAdvice(candle.msTimeStamp);
         }
