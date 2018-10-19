@@ -24,6 +24,8 @@ class Macd {
         if (!result.histogram) { return; }
 
         const lastThree = result.histogram.slice(Math.max(result.histogram.length - 3, 1));
+        Debug.warning('MACD histograma: ', lastThree);
+
         if (lastThree[1] > lastThree[0] && lastThree[2] > lastThree[1]) {
             this.opt.advices.buyAdvice(candle.msTimeStamp);
         }

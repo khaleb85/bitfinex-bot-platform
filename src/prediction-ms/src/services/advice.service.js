@@ -60,6 +60,8 @@ class AdviceService {
     static _ajustWeight(currentTimeframe) {
         return new Promise(resolve => {
             AdviceRepository.getPreviousAdvice(currentTimeframe).then(adv => {
+                if (!adv) { return; }
+
                 this.getCandle(currentTimeframe).then(currentCandleStr => {
                     this.getCandle(adv.timeframe).then(previousCandleStr => {
                         const currentCandle = JSON.parse(currentCandleStr);
