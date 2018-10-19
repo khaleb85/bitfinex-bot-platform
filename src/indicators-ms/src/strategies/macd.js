@@ -26,11 +26,11 @@ class Macd {
         const lastThree = result.histogram.slice(Math.max(result.histogram.length - 3, 1));
         Debug.warning(`MACD histograma: ${JSON.stringify(lastThree)}`);
 
-        if (lastThree[1] > lastThree[0] && lastThree[2] > lastThree[1]) {
+        if (lastThree[0] > 0 || (lastThree[1] > lastThree[0] && lastThree[2] > lastThree[1])) {
             this.opt.advices.buyAdvice(candle.msTimeStamp);
         }
 
-        if (lastThree[1] < lastThree[0] && lastThree[2] < lastThree[1]) {
+        if (lastThree[0] < 0 || (lastThree[1] < lastThree[0] && lastThree[2] < lastThree[1])) {
             this.opt.advices.sellAdvice(candle.msTimeStamp);
         }
     }
