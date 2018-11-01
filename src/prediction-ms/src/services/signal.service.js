@@ -10,7 +10,7 @@ class SignalService {
     }
 
     static sendSellSignal(timeframe) {
-        const signal = new Signal('buy', timeframe);
+        const signal = new Signal('sell', timeframe);
         Debug.success('Emitted Sell Signal');
         return SignalRepository.storeSignal(signal);
     }

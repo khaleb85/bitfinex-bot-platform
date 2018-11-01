@@ -18,7 +18,11 @@ mProcess.start(() => {
     const api = new Api();
     api.start(hydraConfig);
 }, () => {
-    hydra.init(hydraConfig);
+    const mockIps = process.env.MOCK_IP;
+    if (!mockIps) {
+        hydra.init(hydraConfig);
+    }
+
     new BitfinexWsService().start()
         .on('change', candle => {
             Debug.log(`change: ${JSON.stringify(candle)}`);

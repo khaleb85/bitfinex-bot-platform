@@ -23,6 +23,9 @@ mProcess.start(() => {
         migration.createTable(databaseName, 'advices');
         migration.createTable(databaseName, 'signal');
 
-        hydra.init(hydraConfig);
+        const mockIps = process.env.MOCK_IP;
+        if (!mockIps) {
+            hydra.init(hydraConfig);
+        }
     });
 });

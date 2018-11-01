@@ -24,7 +24,7 @@ class AdviceService {
                             const temp = advice;
                             temp.indicatorId = indicator[0].id;
                             temp.timeframe = parseInt(temp.timeframe);
-
+                            console.log(temp);
                             Repository.insert(AdviceRepository.advTable, temp).then(() => {
                                 return resolve(true);
                             });

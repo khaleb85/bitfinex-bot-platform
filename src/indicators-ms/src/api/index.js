@@ -1,5 +1,5 @@
 import hydraExpress from 'hydra-express';
-import cluster from 'cluster';
+import express from 'express';
 import BodyParser from 'body-parser';
 import packageJson from '../../package.json';
 import Debug from '../tools/debug';
@@ -21,10 +21,28 @@ class Api {
      * @since 1.0.0
      */
     start(config) {
-        hydraExpress.init(config, packageJson.version, this.registerRoutesCallback, this.registerMiddlewareCallback)
-            .then((serviceinfo) => {
-                // Debug.success(`${serviceinfo.serviceName} service is living on ${serviceinfo.serviceIP}:${serviceinfo.servicePort} with worker id: ${cluster.worker.id}`);
+        const mockIps = process.env.MOCK_IP;
+        if (mockIps) {
+            const app = express();
+
+            app.use(BodyParser.json());
+            app.use((req, res, next) => {   
+                const str = new StrategyLoaderService();
+                str._init();
+                req.strLoader = str;
+                next();
             });
+
+            app.use('/updates', UpdatesController);
+            app.use('/indicators', indicatorsController);
+
+            app.listen(3030, () => Debug.success('We are living on port 3030'));
+        } else {
+            hydraExpress.init(config, packageJson.version, this.registerRoutesCallback, this.registerMiddlewareCallback)
+                .then((serviceinfo) => {
+                    // Debug.success(`${serviceinfo.serviceName} service is living on ${serviceinfo.serviceIP}:${serviceinfo.servicePort} with worker id: ${cluster.worker.id}`);
+                });
+        }
     }
 
     /**

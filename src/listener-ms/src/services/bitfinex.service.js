@@ -2,6 +2,7 @@
 import request from 'request';
 import Candle from '../models/candle';
 import bitfinexConf from '../configs/bitfinex.json';
+import hist from '../mock/hist';
 
 /**
  * Service that make comunication with bitfinex api.
@@ -19,6 +20,11 @@ class BitfinexService {
     getLastCandle() {
         return new Promise((resolve) => {
             let body = '';
+            const mockIps = process.env.MOCK_IP;
+            if (mockIps) {
+                return resolve(Candle.create([1540335600000, 6544.5, 6552.1, 6552.28374, 6544.5, 35.31529344]));
+            }
+
             request.get(`${bitfinexConf.basePublicRestUrl}/v2/candles/trade:${bitfinexConf.timeFrame}:${bitfinexConf.symbol}/last`)
                 .on('response', (response) => {
                     response.on('data', chunk => {
@@ -76,6 +82,13 @@ class BitfinexService {
      */
     getHist() {
         return new Promise(resolve => {
+            const mockIps = process.env.MOCK_IP;
+            if (mockIps) {
+                const arr = [];
+                hist.forEach(x => arr.push(Candle.create(x)));
+                return resolve(arr);
+            }
+
             let body = '';
             request.get(`${bitfinexConf.basePublicRestUrl}/v2/candles/trade:${bitfinexConf.timeFrame}:${bitfinexConf.symbol}/hist`)
                 .on('response', (response) => {
@@ -91,7 +104,7 @@ class BitfinexService {
                         const candles = [];
                         const arr = JSON.parse(body);
                         arr.forEach(x => candles.push(Candle.create(x)));
-                        resolve(candles);
+                        return resolve(candles);
                     });
                 });
         });

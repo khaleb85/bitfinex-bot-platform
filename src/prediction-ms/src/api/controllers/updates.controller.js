@@ -5,6 +5,7 @@ const router = new express.Router();
 
 router.post('/change', (req, res) => {
     const indicatorsService = new IndicatorsService();
+    console.log(req.body);
     indicatorsService.sendUpdate(req.body);
     res.json({
         status: 'received',

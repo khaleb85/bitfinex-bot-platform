@@ -66,6 +66,14 @@ class ServiceComunication {
      */
     static _discoveryServiceIp(serviceName) {
         return new Promise((resolve, reject) => {
+            const mockIps = process.env.MOCK_IP;
+            if (mockIps) {
+                const obj = JSON.parse(process.env.MOCK_IP);
+                if (obj[serviceName]) {
+                    return resolve(`http://${obj[serviceName]}`);
+                }
+            }
+
             hydra.getServicePresence(serviceName).then(service => {
                 if (Array.isArray(service)) {
                     if (!service[0] || !service[0].ip) { return resolve(); }
