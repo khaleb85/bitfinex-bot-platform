@@ -26,7 +26,7 @@ class ServiceComunication {
 
                 request.post({
                     url: `${url}${endpoint}`,
-                    form: data,
+                    json: data,
                 }).then(html => {
                     resolve(html);
                 });
