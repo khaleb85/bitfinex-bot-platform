@@ -54,6 +54,12 @@ class BitfinexService {
     getCandle(timeframe) {
         return new Promise(resolve => {
             let body = '';
+
+            const mockIps = process.env.MOCK_IP;
+            if (mockIps) {
+                return resolve(Candle.create([timeframe, 6544.5, 6552.1, 6552.28374, 6544.5, 35.31529344]));
+            }
+
             request.get(`${bitfinexConf.basePublicRestUrl}/v2/candles/trade:${bitfinexConf.timeFrame}:${bitfinexConf.symbol}/hist?start=${timeframe}&limit=1&sort=1`)
                 .on('response', (response) => {
                     response.on('data', chunk => {

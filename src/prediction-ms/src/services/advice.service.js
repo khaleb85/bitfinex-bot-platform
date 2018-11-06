@@ -66,7 +66,6 @@ class AdviceService {
                     this.getCandle(adv.timeframe).then(previousCandleStr => {
                         const currentCandle = JSON.parse(currentCandleStr);
                         const previousCandle = JSON.parse(previousCandleStr);
-                        Debug.error(JSON.stringify(currentCandle));
 
                         const currentClose = parseFloat(currentCandle.close);
                         const previousClose = parseFloat(previousCandle.close);
